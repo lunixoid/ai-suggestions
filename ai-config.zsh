@@ -61,7 +61,7 @@ ai_autocomplete_widget() {
         BUFFER="🤖 AI thinking..."
         zle redisplay
         
-        local suggestion=$(pplx "Complete this shell command: '$original_buffer'. Provide only the completed command, no explanation. No markdown markup. No code blocks.")
+        local suggestion=$(pplx "Write down shell command for: '$original_buffer'. Provide only the completed command, no explanation. No markdown markup. No code blocks.")
         
         if [[ -n "$suggestion" && "$suggestion" != "null" ]]; then
             # Replace with suggestion
