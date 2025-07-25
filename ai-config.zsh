@@ -1,6 +1,7 @@
-# AI Configuration for ZSH
-PERPLEXITY_MODEL="sonar"
+PERPLEXITY_MODEL="sonar-pro"
+SYSTEM_CONTEXT=$(awk -F= '/DISTRIB_ID|DISTRIB_RELEASE/{gsub(/"/,"",$2); printf "%s ", $2}' /etc/lsb-release | sed 's/ $//')
 
+# Call Perplexity API
 pplx() {
     if [[ -z "$PERPLEXITY_API_KEY" ]]; then
         echo "❌ PERPLEXITY_API_KEY not set"
@@ -24,11 +25,9 @@ pplx() {
         }" | jq -r '.choices[0].message.content'
 }
 
-# ZLE widgets for interactive use
-# Error analysis (Ctrl+E)
 explain_error_widget() {
     local last_command=$(fc -ln -1)
-    local query="The command '$last_command' failed. Explain why and suggest a fix. Be concise."
+    local query="The command '$last_command' failed. My system: $SYSTEM_CONTEXT. Explain why and suggest a fix. Be concise."
     
     echo "\n🔍 Error Analysis:"
     pplx "$query"
@@ -37,7 +36,6 @@ explain_error_widget() {
 zle -N explain_error_widget
 bindkey '^E' explain_error_widget
 
-# Help for current command (Ctrl+H)
 get_command_help_widget() {
     local current_word="${BUFFER%% *}"
     if [[ -n "$current_word" ]]; then
@@ -51,23 +49,19 @@ get_command_help_widget() {
 zle -N get_command_help_widget
 bindkey '^H' get_command_help_widget
 
-# AI autocomplete (Ctrl+Space)
 ai_autocomplete_widget() {
     if [[ -n "$BUFFER" ]]; then
         local original_buffer="$BUFFER"
         
-        # Show progress
         local old_buffer="$BUFFER"
         BUFFER="🤖 AI thinking..."
         zle redisplay
         
-        local suggestion=$(pplx "Write down shell command for: '$original_buffer'. Provide only the completed command, no explanation. No markdown markup. No code blocks.")
+        local suggestion=$(pplx "Write down new shell command for: '$original_buffer'. My system: $SYSTEM_CONTEXT. Provide only the completed command, no explanation. No markdown markup. No code blocks.")
         
         if [[ -n "$suggestion" && "$suggestion" != "null" ]]; then
-            # Replace with suggestion
             BUFFER="$suggestion"
         else
-            # Return original command
             BUFFER="$original_buffer"
         fi
         
@@ -78,3 +72,4 @@ zle -N ai_autocomplete_widget
 bindkey '^ ' ai_autocomplete_widget  # Ctrl+Space
 
 alias ai='pplx'
+
