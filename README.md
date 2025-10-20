@@ -1,6 +1,9 @@
 # AI Terminal Assistant for ZSH
 
-This project provides an AI-powered assistant for your ZSH terminal, leveraging the Perplexity AI API to enhance your command-line experience with smart suggestions, error explanations, command help, and autocompletion.
+This project provides an AI-powered assistant for your ZSH terminal with two backends:
+
+- Perplexity API (cloud)
+- Local Ollama + web search context (DuckDuckGo + Jina Reader)
 
 ## Features
 
@@ -11,33 +14,56 @@ This project provides an AI-powered assistant for your ZSH terminal, leveraging 
 
 ## Installation
 
-1. **Download the configuration file**
-   Place `ai-config.zsh` in your preferred configuration directory, for example: `~/.config/zsh/ai-config.zsh`.
+Choose ONE backend and source its script in your shell config.
 
-2. **Set your Perplexity API key**
-   Export your API key in your shell configuration (e.g., `.zshrc`):
+### A) Perplexity API (cloud)
+
+1. Set your API key in your shell (e.g. `.zshrc`):
    ```sh
    export PERPLEXITY_API_KEY="API_TOKEN"
    ```
-
-3. **Source the AI configuration**
-   Add the following lines to your `.zshrc` or equivalent config:
+2. Source the script:
    ```sh
-   # Load AI configuration
-   if [[ -f ~/.config/zsh/ai-config.zsh ]]; then
-       source ~/.config/zsh/ai-config.zsh
-   fi
+   source ai-suggestions/ai-perplexity.zsh
    ```
 
-4. **(Optional) Recommended ZSH options**
-   For better history handling:
+### B) Local Ollama + Web Search
+
+1. Install and run Ollama, pull a model (example):
    ```sh
-   setopt HIST_IGNORE_SPACE
-   setopt APPEND_HISTORY
+   ollama pull llama3.1:latest
+   ```
+2. Source the script:
+   ```sh
+   source ai-suggestions/ai-ollama.zsh
+   ```
+3. (Optional) Tune environment variables:
+   ```sh
+   # Model and host
+   export OLLAMA_MODEL="llama3.1:latest"
+   export OLLAMA_HOST="http://localhost:11434"
+
+   # Web search controls
+   export AI_SEARCH_RESULTS=3
+   export AI_SEARCH_TIMEOUT=6
+   export AI_FETCH_TIMEOUT=6
+   export AI_CONTEXT_CHARS=3000
+   export AI_UA="Mozilla/5.0"
+   # Use HTML endpoint; fallback is duckduckgo.com/html
+   export AI_DDG_HOST="https://html.duckduckgo.com/html"
+   # Debug
+   export AI_SEARCH_DEBUG=0
    ```
 
-5. **Reload your shell**
-   Restart your terminal or run `source ~/.zshrc` to apply changes.
+### Recommended ZSH options
+For better history handling:
+```sh
+setopt HIST_IGNORE_SPACE
+setopt APPEND_HISTORY
+```
+
+### Reload your shell
+Restart your terminal or run `source ~/.zshrc` to apply changes.
 
 ## Usage
 
@@ -46,15 +72,17 @@ This project provides an AI-powered assistant for your ZSH terminal, leveraging 
 - **Command Help**: While typing a command, press <kbd>Ctrl+H</kbd> to get help and examples.
 - **Direct AI Query**: Use the `ai` command followed by your question, e.g.:
   ```sh
-  ai How do I find all files larger than 1GB?
+  ai "How do I find all files larger than 1GB?"
   ```
 
 ## Requirements
 
 - ZSH shell
-- [jq](https://stedolan.github.io/jq/) (for parsing JSON)
+- [jq](https://stedolan.github.io/jq/) (for JSON)
 - [curl](https://curl.se/)
-- A valid Perplexity API key
+- [python3](https://www.python.org/) (URL encode/decode helper in Ollama backend)
+- For Perplexity backend: a valid Perplexity API key and internet access
+- For Ollama backend: running [Ollama](https://ollama.com/), a pulled local model, and internet access for web search
 
 ## License
 
