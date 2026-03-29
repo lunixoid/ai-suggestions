@@ -16,15 +16,26 @@ This project provides an AI-powered assistant for your ZSH terminal with two bac
 
 Choose ONE backend and source its script in your shell config.
 
+Each backend has two variants:
+- **Linux** — uses `/etc/lsb-release` to detect the OS version (`ai-perplexity.zsh`, `ai-ollama.zsh`)
+- **macOS** — uses `sw_vers` to detect the OS version (`ai-perplexity-macos.zsh`, `ai-ollama-macos.zsh`)
+
 ### A) Perplexity API (cloud)
 
 1. Set your API key in your shell (e.g. `.zshrc`):
    ```sh
    export PERPLEXITY_API_KEY="API_TOKEN"
    ```
-2. Source the script:
+2. Source the script for your platform:
+
+   **Linux:**
    ```sh
-   source ai-suggestions/ai-perplexity.zsh
+   source ai-perplexity.zsh
+   ```
+
+   **macOS:**
+   ```sh
+   source ai-perplexity-macos.zsh
    ```
 
 ### B) Local Ollama + Web Search
@@ -33,9 +44,16 @@ Choose ONE backend and source its script in your shell config.
    ```sh
    ollama pull llama3.1:latest
    ```
-2. Source the script:
+2. Source the script for your platform:
+
+   **Linux:**
    ```sh
-   source ai-suggestions/ai-ollama.zsh
+   source ai-ollama.zsh
+   ```
+
+   **macOS:**
+   ```sh
+   source ai-ollama-macos.zsh
    ```
 3. (Optional) Tune environment variables:
    ```sh
@@ -54,6 +72,15 @@ Choose ONE backend and source its script in your shell config.
    # Debug
    export AI_SEARCH_DEBUG=0
    ```
+
+### macOS notes
+
+- The macOS scripts use `sw_vers` (built-in) to detect the OS name and version — no extra dependencies needed.
+- The Ollama macOS variant uses a macOS User-Agent string by default, which can improve web search reliability.
+- Install dependencies via [Homebrew](https://brew.sh/) if not already present:
+  ```sh
+  brew install jq curl python3
+  ```
 
 ### Recommended ZSH options
 For better history handling:
