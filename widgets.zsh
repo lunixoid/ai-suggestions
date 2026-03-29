@@ -1,34 +1,9 @@
-PERPLEXITY_MODEL="sonar-pro"
-SYSTEM_CONTEXT="$(sw_vers -productName) $(sw_vers -productVersion)"
-
-# Call Perplexity API
-pplx() {
-    if [[ -z "$PERPLEXITY_API_KEY" ]]; then
-        echo "❌ PERPLEXITY_API_KEY not set"
-        return 1
-    fi
-    
-    local query="$*"
-    local system_prompt="You are a helpful terminal assistant. Be concise and practical. Focus on shell/command line solutions."
-    
-    curl -s --request POST \
-        --url https://api.perplexity.ai/chat/completions \
-        --header "authorization: Bearer $PERPLEXITY_API_KEY" \
-        --header 'content-type: application/json' \
-        --data "{
-            \"model\": \"$PERPLEXITY_MODEL\",
-            \"messages\": [
-                {\"role\": \"system\", \"content\": \"$system_prompt\"},
-                {\"role\": \"user\", \"content\": \"$query\"}
-            ],
-            \"stream\": false
-        }" | jq -r '.choices[0].message.content'
-}
+# Common ZLE widgets shared across all backends.
+# Requires: pplx() function and SYSTEM_CONTEXT variable defined before sourcing.
 
 explain_error_widget() {
     local last_command=$(fc -ln -1)
     local query="The command '$last_command' failed. My system: $SYSTEM_CONTEXT. Explain why and suggest a fix. Be concise."
-    
     echo "\n🔍 Error Analysis:"
     pplx "$query"
     zle reset-prompt
@@ -52,19 +27,16 @@ bindkey '^H' get_command_help_widget
 ai_autocomplete_widget() {
     if [[ -n "$BUFFER" ]]; then
         local original_buffer="$BUFFER"
-        
-        local old_buffer="$BUFFER"
         BUFFER="🤖 AI thinking..."
         zle redisplay
-        
+
         local suggestion=$(pplx "Write down new shell command for: '$original_buffer'. My system: $SYSTEM_CONTEXT. Provide only the completed command, no explanation. No markdown markup. No code blocks.")
-        
+
         if [[ -n "$suggestion" && "$suggestion" != "null" ]]; then
             BUFFER="$suggestion"
         else
             BUFFER="$original_buffer"
         fi
-        
         zle end-of-line
     fi
 }
