@@ -41,6 +41,8 @@ ai_autocomplete_widget() {
     fi
 }
 zle -N ai_autocomplete_widget
-bindkey '^ ' ai_autocomplete_widget  # Ctrl+Space
+# Shift+Enter (depends on terminal support; try common sequences)
+bindkey '\e[13;2u' ai_autocomplete_widget
+bindkey '\e[27;2;13~' ai_autocomplete_widget
 
 alias ai='pplx'
