@@ -12,19 +12,33 @@ This project provides an AI-powered assistant for your ZSH terminal with two bac
 - **Command Help**: Get concise help and examples for any command with <kbd>Ctrl+H</kbd>.
 - **Direct AI Query**: Use the `ai` alias to ask the AI anything related to the terminal.
 
+## Project structure
+
+```
+ai-perplexity.zsh      # Perplexity API backend
+ai-ollama.zsh          # Local Ollama + web search backend
+widgets.zsh            # Shared ZLE widgets (sourced automatically)
+platform/
+  detect.zsh           # Auto-detects OS and sources the right platform file
+  linux.zsh            # Linux: reads /etc/lsb-release, sets Linux User-Agent
+  macos.zsh            # macOS: reads sw_vers, sets macOS User-Agent
+```
+
+Platform detection is automatic via `$OSTYPE`. You can override it by setting `AI_PLATFORM` to `linux` or `macos` before sourcing any backend script.
+
 ## Installation
 
-Choose ONE backend and source its script in your shell config.
+Choose ONE backend and source its script in your shell config (e.g. `~/.zshrc`). Platform detection happens automatically — no separate macOS script needed.
 
 ### A) Perplexity API (cloud)
 
-1. Set your API key in your shell (e.g. `.zshrc`):
+1. Set your API key:
    ```sh
    export PERPLEXITY_API_KEY="API_TOKEN"
    ```
-2. Source the script:
+2. Source the script (works on Linux and macOS):
    ```sh
-   source ai-suggestions/ai-perplexity.zsh
+   source /path/to/ai-perplexity.zsh
    ```
 
 ### B) Local Ollama + Web Search
@@ -33,9 +47,9 @@ Choose ONE backend and source its script in your shell config.
    ```sh
    ollama pull llama3.1:latest
    ```
-2. Source the script:
+2. Source the script (works on Linux and macOS):
    ```sh
-   source ai-suggestions/ai-ollama.zsh
+   source /path/to/ai-ollama.zsh
    ```
 3. (Optional) Tune environment variables:
    ```sh
@@ -54,6 +68,14 @@ Choose ONE backend and source its script in your shell config.
    # Debug
    export AI_SEARCH_DEBUG=0
    ```
+
+### Platform override
+
+By default, the platform is detected from `$OSTYPE`. To force a specific platform:
+```sh
+export AI_PLATFORM="macos"   # or "linux"
+source /path/to/ai-perplexity.zsh
+```
 
 ### Recommended ZSH options
 For better history handling:
@@ -83,6 +105,11 @@ Restart your terminal or run `source ~/.zshrc` to apply changes.
 - [python3](https://www.python.org/) (URL encode/decode helper in Ollama backend)
 - For Perplexity backend: a valid Perplexity API key and internet access
 - For Ollama backend: running [Ollama](https://ollama.com/), a pulled local model, and internet access for web search
+
+On macOS, install dependencies via [Homebrew](https://brew.sh/):
+```sh
+brew install jq curl python3
+```
 
 ## License
 
