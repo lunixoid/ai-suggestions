@@ -28,7 +28,32 @@ Platform detection is automatic via `$OSTYPE`. You can override it by setting `A
 
 ## Installation
 
-Choose ONE backend and source its script in your shell config (e.g. `~/.zshrc`). Platform detection happens automatically — no separate macOS script needed.
+You have two options:
+
+1) Install as an **Oh My Zsh plugin** (recommended if you use Oh My Zsh)
+2) **Manually source** one backend script in your `~/.zshrc`
+
+Platform detection happens automatically — no separate macOS script needed.
+
+### Option 1: Oh My Zsh plugin (recommended)
+
+1. Clone/copy this repository into:
+   ```sh
+   ~/.oh-my-zsh/custom/plugins/ai-suggestions
+   ```
+2. In your `~/.zshrc`, set the backend BEFORE Oh My Zsh is loaded:
+   ```sh
+   export AI_BACKEND="perplexity"  # or "ollama"
+   ```
+3. Configure the chosen backend (see options below), then enable the plugin:
+   ```sh
+   plugins=(... ai-suggestions)
+   ```
+4. Restart your shell or run `exec zsh`.
+
+### Option 2: Manual sourcing (works anywhere)
+
+Choose ONE backend and source its script in your shell config (e.g. `~/.zshrc`).
 
 ### A) Perplexity API (cloud)
 
