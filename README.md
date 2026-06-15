@@ -7,7 +7,7 @@ This project provides an AI-powered assistant for your ZSH terminal with two bac
 
 ## Features
 
-- **AI Command Completion**: Get shell command suggestions and autocompletions with <kbd>Ctrl+Space</kbd>.
+- **AI Command Completion**: Get shell command suggestions and autocompletions with <kbd>Shift+Enter</kbd>.
 - **Error Analysis**: Instantly analyze and get fixes for failed commands with <kbd>Ctrl+E</kbd>.
 - **Command Help**: Get concise help and examples for any command with <kbd>Ctrl+H</kbd>.
 - **Direct AI Query**: Use the `ai` alias to ask the AI anything related to the terminal.
@@ -114,13 +114,26 @@ Restart your terminal or run `source ~/.zshrc` to apply changes.
 
 ## Usage
 
-- **AI Command Completion**: Type a partial command and press <kbd>Ctrl+Space</kbd> to get an AI-generated completion.
+- **AI Command Completion**: Type a partial command and press <kbd>Shift+Enter</kbd> to get an AI-generated completion.
 - **Error Analysis**: After a failed command, press <kbd>Ctrl+E</kbd> to get an explanation and fix.
 - **Command Help**: While typing a command, press <kbd>Ctrl+H</kbd> to get help and examples.
 - **Direct AI Query**: Use the `ai` command followed by your question, e.g.:
   ```sh
   ai "How do I find all files larger than 1GB?"
   ```
+
+## iTerm2: Shift+Enter setup
+
+Some iTerm2 versions/settings do not send a distinct escape sequence for <kbd>Shift+Enter</kbd> by default, so the ZSH key binding may not fire. The fix is to explicitly map the key.
+
+1. Open **iTerm2 → Settings (Preferences) → Profiles → Keys**
+2. Under **Key Mappings**, click **`+`**
+3. Press **<kbd>Shift</kbd>+<kbd>Enter</kbd>**
+4. **Action**: choose **Send Hex Codes**
+5. Paste one of the following (either works with this plugin’s config):
+
+- `0x1b 0x5b 0x31 0x33 0x3b 0x32 0x75` (ESC `[13;2u`)
+- `0x1b 0x5b 0x32 0x37 0x3b 0x32 0x3b 0x31 0x33 0x7e` (ESC `[27;2;13~`)
 
 ## Requirements
 
